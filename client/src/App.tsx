@@ -1,19 +1,14 @@
 import { useState, useEffect } from 'react';
-import reactLogo from './assets/react.svg';
-import viteLogo from './assets/vite.svg';
-import heroImg from './assets/hero.png';
 import './App.css';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
-import ExperimentCard from './components/ExperimentCard';
-import Dashboard from './components/Dashboard';
 import EnergyProfileSelector from './components/EnergyProfileSelector';
 import SourceBreakdownChart from './components/SourceBreakdownChart';
 import HourlyConsumptionChart from './components/HourlyConsumptionChart';
 import IdealUsageWindow from './components/IdealUsageWindow';
 import BuildingList from './components/BuildingList';
 import CO2TrackerPage from './components/CO2TrackerPage';
-import type { EnergyProfile, BuildingLog, BuildingInfo, PowerProvider } from './types/energy';
+import type { EnergyProfile, BuildingLog, BuildingInfo } from './types/energy';
 import { generateMonthlyProfiles, loadEnergyDataFromCSV } from './utils/energyData';
 
 // Mock building data

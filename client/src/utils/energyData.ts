@@ -12,7 +12,6 @@ export const CO2_FACTORS: Co2Factors = {
 // Parse the Excel data (you'll need to export as CSV first)
 export function parseEnergyData(csvData: string): HourlyEnergyData[] {
   const lines = csvData.trim().split('\n');
-  const headers = lines[0].split(',');
   
   return lines.slice(1).map(line => {
     const values = line.split(',');

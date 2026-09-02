@@ -1,5 +1,4 @@
 // src/components/EnergyProfileSelector.tsx
-import React from 'react';
 import type { EnergyProfile } from '../types/energy'; // Ensure this path is correct relative to the file
 
 interface Props {
