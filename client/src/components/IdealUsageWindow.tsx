@@ -16,7 +16,7 @@ export default function IdealUsageWindow({ hourlyData }: Props) {
   const avgSolar = peakHours.reduce((sum, d) => sum + d.solar, 0) / peakHours.length * 100;
 
   return (
-    <div style={{ backgroundColor: '#e8f5e9', padding: '15px', borderRadius: '8px', marginTop: '20px' }}>
+    <div style={{ backgroundColor: '#f2f7f6ff', padding: '15px', borderRadius: '8px', marginTop: '20px' }}>
       <h3> Ideal Usage Window</h3>
       <p><strong>Best Time:</strong> {startHour}:00 - {endHour}:00</p>
       <p><strong>Solar Contribution:</strong> {avgSolar.toFixed(1)}%</p>
