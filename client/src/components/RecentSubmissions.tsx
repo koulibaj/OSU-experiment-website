@@ -1,5 +1,4 @@
 // src/components/RecentSubmissions.tsx
-import type { EnergySubmission } from '../types/submissions';
 import { getRecentSubmissions, getActiveExperiments } from '../types/submissions';
 import { ACTIVITY_TYPES } from '../types/submissions';
 

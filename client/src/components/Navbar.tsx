@@ -1,4 +1,4 @@
-import type { FC } from 'react';
+
 
 interface Props {
   currentPage: string;

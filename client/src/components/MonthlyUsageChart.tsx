@@ -39,10 +39,10 @@ export default function MonthlyUsageChart({ building, title }: Props) {
                 border: '1px solid #333333',
                 color: '#E0E0E0',
               }}
-              formatter={(value: number) => [
-                value.toLocaleString() + ' ' + building.unit, 
-                'Usage'
-              ]}
+              formatter={(value) => {
+                const numValue = typeof value === 'number' ? value : 0;
+                return [numValue.toLocaleString() + ' ' + building.unit, 'Usage'];
+              }}
             />
             <Bar dataKey="usage" fill="#F74902" radius={[4, 4, 0, 0]} />
           </BarChart>

@@ -4,20 +4,20 @@ export interface EnergySubmission {
   id: string;
   buildingCode: string;
   buildingName: string;
-  timestamp: string; // ISO string
-  hour: number; // 0-23
+  timestamp: string;
+  hour: number;
   consumptionKWH: number;
   activityType: 'experiment' | 'routine' | 'maintenance' | 'other';
   description: string;
-  submittedBy: string; // Name or email
+  submittedBy: string;
   contactEmail?: string;
 }
 
 export const ACTIVITY_TYPES = [
-  { value: 'experiment', label: 'Experiment' },
-  { value: 'routine', label: 'Routine Operations' },
-  { value: 'maintenance', label: 'Maintenance' },
-  { value: 'other', label: 'Other' },
+  { value: 'experiment', label: ' Experiment' },
+  { value: 'routine', label: ' Routine Operations' },
+  { value: 'maintenance', label: ' Maintenance' },
+  { value: 'other', label: ' Other' },
 ] as const;
 
 export function generateSubmissionId(): string {
@@ -26,7 +26,7 @@ export function generateSubmissionId(): string {
 
 export function saveSubmission(submission: EnergySubmission): void {
   const existing = getSubmissions();
-  const updated = [submission, ...existing].slice(0, 100); // Keep last 100
+  const updated = [submission, ...existing].slice(0, 100);
   localStorage.setItem('energy_submissions', JSON.stringify(updated));
 }
 
@@ -53,7 +53,15 @@ export function getActiveExperiments(): EnergySubmission[] {
   
   return getSubmissions().filter(sub => {
     const subHour = sub.hour;
-    const isRecent = Math.abs(currentHour - subHour) <= 2; // Within 2 hours
+    const isRecent = Math.abs(currentHour - subHour) <= 2;
     return sub.activityType === 'experiment' && isRecent;
   });
+}
+
+export function clearAllSubmissions(): void {
+  localStorage.removeItem('energy_submissions');
+}
+
+export function getSubmissionsCount(): number {
+  return getSubmissions().length;
 }
