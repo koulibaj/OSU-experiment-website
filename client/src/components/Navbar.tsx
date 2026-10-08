@@ -48,7 +48,7 @@ export default function Navbar({ currentPage, onNavigate }: Props) {
           </div>
           <div>
             <h1 style={{ margin: 0, fontSize: '1.2rem', color: '#FFFFFF' }}>
-              Campus Energy Tracker
+              Smart Labs Energy Tracker
             </h1>
             <span style={{ fontSize: '0.85rem', color: '#F74902' }}>
               Oregon State University

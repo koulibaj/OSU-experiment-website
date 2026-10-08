@@ -9,6 +9,8 @@ import MonthlyUsageChart from './components/MonthlyUsageChart';
 import SeasonalBreakdown from './components/SeasonalBreakdown';
 import type { UtilityType, BuildingUtilityData, CampusAggregate } from './utils/utilityData';
 import { loadUtilityData, aggregateCampusData, UTILITY_LABELS } from './utils/utilityData';
+import EnergySubmissionForm from './components/EnergySubmissionForm';
+import RecentSubmissions from './components/RecentSubmissions';
 
 function App() {
   const [currentPage, setCurrentPage] = useState('dashboard');
@@ -47,75 +49,160 @@ function App() {
   const renderPageContent = () => {
     switch (currentPage) {
       case 'dashboard':
-        return (
+  return (
+    <>
+      <section id="dashboard" style={{ marginBottom: '3rem' }}>
+        
+        {/* ============================================ */}
+        {/* SECTION 1: HEADER (Welcome Title) */}
+        {/* ============================================ */}
+        <div style={{ 
+          textAlign: 'center', 
+          marginBottom: '3rem',
+          padding: '2rem 0',
+        }}>
+          <h2 style={{ 
+            fontSize: '3rem', 
+            fontWeight: 'bold', 
+            color: 'white',
+            margin: '0 0 1rem 0',
+            letterSpacing: '-0.02em',
+          }}>
+            Smart Labs Energy Tracker
+          </h2>
+          <p style={{ 
+            fontSize: '1.25rem', 
+            color: '#999999', 
+            maxWidth: '700px', 
+            margin: '0 auto',
+            lineHeight: '1.6',
+          }}>
+            Real-time utility consumption data across Oregon State University campus buildings
+          </p>
+        </div>
+
+        {/* ============================================ */}
+        {/* SECTION 2: UTILITY SELECTOR (Dropdown) */}
+        {/* ============================================ */}
+        <div style={{ marginBottom: '2rem' }}>
+          <UtilitySelector utilityType={utilityType} onSelect={setUtilityType} />
+        </div>
+
+        {/* ============================================ */}
+        {/* SECTION 3: LOADING STATE */}
+        {/* ============================================ */}
+        {loading && (
+          <div style={{ 
+            textAlign: 'center', 
+            padding: '3rem', 
+            color: '#F74902', 
+            fontSize: '1.2rem' 
+          }}>
+            Loading {UTILITY_LABELS[utilityType]} data...
+          </div>
+        )}
+
+        {/* ============================================ */}
+        {/* SECTION 4: ERROR STATE */}
+        {/* ============================================ */}
+        {error && (
+          <div style={{ 
+            padding: '2rem', 
+            backgroundColor: '#1E1E1E',
+            border: '2px solid #ff4444',
+            borderRadius: '8px',
+            color: '#ff4444',
+            marginBottom: '2rem',
+          }}>
+            <h3>Error Loading Data</h3>
+            <p>{error}</p>
+            <p style={{ fontSize: '0.9rem', marginTop: '1rem' }}>
+              Check the Console (F12) for details.
+            </p>
+          </div>
+        )}
+
+        {/* ============================================ */}
+        {/* SECTION 5: MAIN CONTENT (Shows when data loads) */}
+        {/* ============================================ */}
+        {!loading && !error && campusAggregate && (
           <>
-            <section id="dashboard">
-              <h2 style={{ marginBottom: '1.5rem' }}>Campus Utilities Dashboard - FY26</h2>
-              <p style={{ color: '#999999', marginBottom: '2rem' }}>
-                Real-time utility consumption data across Oregon State University campus buildings
+            {/* --- Part A: Campus Overview Cards --- */}
+            <CampusOverview aggregate={campusAggregate} utilityType={utilityType} />
+
+            {/* --- Part B: Building Selector Dropdown --- */}
+            <div style={{ marginBottom: '2rem' }}>
+              <BuildingSelector
+                buildings={buildingData}
+                selectedBuilding={selectedBuilding}
+                onSelect={setSelectedBuilding}
+              />
+            </div>
+
+            {/* --- Part C: Building Details (Charts) --- */}
+            {selectedBuilding ? (
+              <div className="analytics-grid" style={{ 
+                display: 'grid', 
+                gridTemplateColumns: 'repeat(auto-fit, minmax(500px, 1fr))', 
+                gap: '20px',
+              }}>
+                <MonthlyUsageChart 
+                  building={selectedBuilding} 
+                  title={`${selectedBuilding.buildingName} - Monthly Usage`}
+                />
+                <SeasonalBreakdown building={selectedBuilding} />
+              </div>
+            ) : (
+              <div className="card" style={{ padding: '2rem', textAlign: 'center' }}>
+                <p style={{ color: '#999999', fontSize: '1.1rem' }}>
+                  Select a building above to view detailed usage patterns
+                </p>
+              </div>
+            )}
+
+            {/* ============================================ */}
+            {/* SECTION 6: COMMUNITY ENERGY MONITORING (NEW!) */}
+            {/* ============================================ */}
+            <div style={{ 
+              marginTop: '3rem', 
+              paddingTop: '2rem', 
+              borderTop: '2px solid #333333' 
+            }}>
+              <h2 style={{ marginBottom: '1rem' }}>
+                 Community Energy Monitoring
+              </h2>
+              <p style={{ color: '#999999', marginBottom: '1.5rem' }}>
+                Share your building's energy usage data to help researchers coordinate 
+                experiments and optimize campus energy consumption
               </p>
               
-              <UtilitySelector utilityType={utilityType} onSelect={setUtilityType} />
-
-              {loading && (
-                <div style={{ textAlign: 'center', padding: '3rem', color: '#F74902', fontSize: '1.2rem' }}>
-                  Loading {UTILITY_LABELS[utilityType]} data...
+              <div style={{ 
+                display: 'grid', 
+                gridTemplateColumns: 'repeat(auto-fit, minmax(500px, 1fr))', 
+                gap: '20px',
+              }}>
+                {/* Left Column: Submission Form */}
+                <div>
+                  <EnergySubmissionForm
+                    buildingCode={selectedBuilding?.buildingCode}
+                    buildingName={selectedBuilding?.buildingName}
+                  />
                 </div>
-              )}
-
-              {error && (
-                <div style={{ 
-                  padding: '2rem', 
-                  backgroundColor: '#1E1E1E',
-                  border: '2px solid #ff4444',
-                  borderRadius: '8px',
-                  color: '#ff4444',
-                  marginBottom: '2rem',
-                }}>
-                  <h3>Error Loading Data</h3>
-                  <p>{error}</p>
-                  <p style={{ fontSize: '0.9rem', marginTop: '1rem' }}>
-                    Check the Console (F12) for details.
-                  </p>
+                
+                {/* Right Column: Recent Submissions */}
+                <div>
+                  <RecentSubmissions 
+                    buildingCode={selectedBuilding?.buildingCode} 
+                  />
                 </div>
-              )}
+              </div>
+            </div>
 
-              {!loading && !error && campusAggregate && (
-                <>
-                  <CampusOverview aggregate={campusAggregate} utilityType={utilityType} />
-
-                  <div style={{ marginBottom: '2rem' }}>
-                    <BuildingSelector
-                      buildings={buildingData}
-                      selectedBuilding={selectedBuilding}
-                      onSelect={setSelectedBuilding}
-                    />
-                  </div>
-
-                  {selectedBuilding ? (
-                    <div className="analytics-grid" style={{ 
-                      display: 'grid', 
-                      gridTemplateColumns: 'repeat(auto-fit, minmax(500px, 1fr))', 
-                      gap: '20px',
-                    }}>
-                      <MonthlyUsageChart 
-                        building={selectedBuilding} 
-                        title={`${selectedBuilding.buildingName} - Monthly Usage`}
-                      />
-                      <SeasonalBreakdown building={selectedBuilding} />
-                    </div>
-                  ) : (
-                    <div className="card" style={{ padding: '2rem', textAlign: 'center' }}>
-                      <p style={{ color: '#999999', fontSize: '1.1rem' }}>
-                        Select a building above to view detailed usage patterns
-                      </p>
-                    </div>
-                  )}
-                </>
-              )}
-            </section>
           </>
-        );
+        )}
+      </section>
+    </>
+  );
 
       case 'buildings':
         return (
@@ -175,7 +262,7 @@ function App() {
           <section id="co2-page" style={{ maxWidth: '1400px', margin: '0 auto', padding: '2rem' }}>
             <h2 style={{ marginBottom: '1rem' }}>CO₂ Emissions Tracker</h2>
             <p style={{ color: '#999999', marginBottom: '2rem' }}>
-              Campus-wide carbon footprint based on actual utility consumption
+              Campus-wide carbon footprint based on utility consumption
             </p>
 
             <UtilitySelector utilityType={utilityType} onSelect={setUtilityType} />
@@ -219,7 +306,7 @@ function App() {
                     <li><strong>Steam:</strong> 0.052 kg CO₂ per pound</li>
                   </ul>
                   <p style={{ color: '#999999', fontSize: '0.85rem', marginTop: '1rem', marginBottom: 0 }}>
-                    Sources: EPA eGRID 2022, EIA
+                    Sources: EPA eGRID 2022, EIA <p style={{ fontSize: '0.70rem' }}>(*These values are representative estimates and may vary based on actual energy sources and efficiency)</p>
                   </p>
                 </div>
               </div>
@@ -241,7 +328,7 @@ function App() {
         <>
           {/* Top 20 Consumers */}
           <div className="card" style={{ padding: '2rem', marginBottom: '2rem' }}>
-            <h3 style={{ marginBottom: '1.5rem' }}>Top 20 Energy Consumers</h3>
+            <h3 style={{ marginBottom: '1.5rem' }}>Top 10 Energy Consumers</h3>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '10px' }}>
               {campusAggregate.topConsumers.map((building, idx) => (
                 <div 
